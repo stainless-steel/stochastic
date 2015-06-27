@@ -98,12 +98,13 @@ impl Iterator for FractionalNoisePath {
 ///
 /// References:
 ///
-/// 1. Dirk P. Kroese, Thomas Taimre, and Zdravko I. Botev. Handbook for Monte
-///    Carlo Methods. Hoboken, N.J.: Wiley, 2011.
+/// 1. D. P. Kroese, T. Taimre, and Z. I. Botev, Handbook of Monte Carlo
+///    Methods. John Wiley & Sons, Inc., 2011.
 ///
-/// 2. C. R. Dietrich and G. N. Newsam. “Fast and Exact Simulation of Stationary
-///    Gaussian Processes Through Circulant Embedding of the Covariance Matrix.”
-///    Siam Journal on Scientific Computing, 1997.
+/// 2. C. R. Dietrich and G. N. Newsam, “Fast and exact simulation of stationary
+///    Gaussian processes through circulant embedding of the covariance matrix,”
+///    SIAM Journal on Scientific Computing, vol. 18, no. 4, pp. 1088–1107,
+///    1997.
 fn circulant_embedding<P, F>(process: &P, n: usize, mut gaussian: F) -> Vec<c64>
     where P: Process<Index=usize, State=f64> + Stationary<Index=usize>, F: FnMut() -> f64
 {
