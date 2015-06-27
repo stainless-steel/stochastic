@@ -9,5 +9,9 @@ documentation = "https://stainless-steel.github.io/process"
 description = "The package provides means of simulating stochastic processes."
 
 [dependencies]
-fft = "*"
+complex = "*"
+czt = "*"
 probability = "*"
+
+[dev-dependencies]
+assert = "*"
