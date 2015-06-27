@@ -33,6 +33,6 @@ pub trait Stationary {
     /// The index set.
     type Index;
 
-    /// Compute the covariance functino.
+    /// Compute the covariance function.
     fn cov(&self, Self::Index) -> f64;
 }
