@@ -1,5 +1,6 @@
 //! Gaussian processes.
 
+use complex::{Complex, c64};
 use probability::distribution::{Distribution, Gaussian};
 use probability::generator::Generator;
 
@@ -37,12 +38,9 @@ impl Stationary for FractionalNoise {
     type Index = usize;
 
     fn cov(&self, tau: usize) -> f64 {
-        if tau == 0 {
-            return 1.0;
-        }
         let tau = tau as f64;
         let power = 2.0 * self.hurst;
-        0.5 * ((tau + 1.0).powf(power) - 2.0 * tau.powf(power) + (tau - 1.0).powf(power))
+        0.5 * ((tau + 1.0).powf(power) - 2.0 * tau.powf(power) + (tau - 1.0).abs().powf(power))
     }
 }
 
@@ -51,13 +49,15 @@ impl FractionalNoisePath {
     fn new<G>(noise: &FractionalNoise, size: usize, generator: &mut G) -> FractionalNoisePath
         where G: Generator
     {
-        let gaussian = Gaussian::new(0.0, 1.0);
-        let mut data = sample_stationary(noise, size, || gaussian.sample(generator));
-        let scale = (1.0 / (size - 1) as f64).powf(noise.hurst);
-        for i in 0..data.len() {
-            data[i] *= scale;
+        FractionalNoisePath {
+            position: 0,
+            data: {
+                let gaussian = Gaussian::new(0.0, 1.0);
+                let scale = (1.0 / (size - 1) as f64).powf(noise.hurst);
+                let data = circulant_embedding(noise, size, || gaussian.sample(generator));
+                data.iter().take(size).map(|point| scale * point.re()).collect()
+            },
         }
-        FractionalNoisePath { position: 0, data: data }
     }
 }
 
@@ -90,10 +90,20 @@ impl Iterator for FractionalNoisePath {
     }
 }
 
-fn sample_stationary<P, F>(process: &P, size: usize, mut gaussian: F) -> Vec<f64>
+/// Compute two independent sample paths stored in the real and complex parts of
+/// a sequence of `2 × n` complex numbers.
+///
+/// References:
+///
+/// 1. Dirk P. Kroese, Thomas Taimre, and Zdravko I. Botev. Handbook for Monte
+///    Carlo Methods. Hoboken, N.J.: Wiley, 2011.
+///
+/// 2. C. R. Dietrich and G. N. Newsam. “Fast and Exact Simulation of Stationary
+///    Gaussian Processes Through Circulant Embedding of the Covariance Matrix.”
+///    Siam Journal on Scientific Computing, 1997.
+fn circulant_embedding<P, F>(process: &P, n: usize, mut gaussian: F) -> Vec<c64>
     where P: Process<Index=usize, State=f64> + Stationary<Index=usize>, F: FnMut() -> f64
 {
-    use complex::{Complex, c64};
     use czt;
 
     macro_rules! chirp(
@@ -103,7 +113,6 @@ fn sample_stationary<P, F>(process: &P, size: usize, mut gaussian: F) -> Vec<f64
         });
     );
 
-    let n = size - 1;
     let m = (1 + n) + (1 + n) - 2;
     let mut data = vec![0.0; m];
     {
@@ -123,23 +132,22 @@ fn sample_stationary<P, F>(process: &P, size: usize, mut gaussian: F) -> Vec<f64
                 assert!(data[i].re() > -EPSILON);
                 assert!(data[i].im().abs() < EPSILON);
             }
-            let eta = (data[i].re().max(0.0) * scale).sqrt();
-            data[i] = c64(eta * gaussian(), eta * gaussian());
+            let sigma = (data[i].re().max(0.0) * scale).sqrt();
+            data[i] = c64(sigma * gaussian(), sigma * gaussian());
         }
     }
 
-    let data = czt::forward(&mut data, m, chirp!(m), c64(1.0, 0.0));
-
-    data.iter().take(size).map(|point| point.re()).collect()
+    czt::forward(&mut data, m, chirp!(m), c64(1.0, 0.0))
 }
 
 #[cfg(test)]
 mod tests {
     use assert;
+    use complex::Complex;
     use gaussian::FractionalNoise;
 
     #[test]
-    fn sample_stationary() {
+    fn circulant_embedding() {
         let gaussians = [
              5.376671395461000e-01,  1.978110534643607e-01,
              1.833885014595086e+00,  1.587699089974059e+00,
@@ -225,7 +233,7 @@ mod tests {
              2.915843739841825e-01,  2.525999692118309e+00,
         ];
 
-        let noise = [
+        let expected_data = [
              1.287132850136693e+00,
              1.762134487554469e+00,
             -1.629296357049933e+00,
@@ -274,7 +282,9 @@ mod tests {
         let gaussian = || { k += 1; gaussians[k - 1] };
 
         let process = FractionalNoise::new(0.35);
+        let data = super::circulant_embedding(&process, 42 - 1, gaussian)
+                         .iter().take(42).map(|point| point.re()).collect::<Vec<_>>();
 
-        assert::close(&super::sample_stationary(&process, 42, gaussian), &noise[..], 1e-13);
+        assert::close(&data, &expected_data[..], 1e-13);
     }
 }
