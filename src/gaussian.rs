@@ -49,15 +49,18 @@ impl FractionalNoisePath {
     fn new<G>(noise: &FractionalNoise, size: usize, generator: &mut G) -> FractionalNoisePath
         where G: Generator
     {
-        FractionalNoisePath {
-            position: 0,
-            data: {
+        let data = match size {
+            0 => vec![],
+            1 => vec![Gaussian::new(0.0, 1.0).sample(generator)],
+            _ => {
+                let n = size - 1;
                 let gaussian = Gaussian::new(0.0, 1.0);
-                let scale = (1.0 / (size - 1) as f64).powf(noise.hurst);
-                let data = circulant_embedding(noise, size, || gaussian.sample(generator));
+                let scale = (1.0 / n as f64).powf(noise.hurst);
+                let data = circulant_embedding(noise, n, || gaussian.sample(generator));
                 data.iter().take(size).map(|point| scale * point.re()).collect()
             },
-        }
+        };
+        FractionalNoisePath { position: 0, data: data }
     }
 }
 
