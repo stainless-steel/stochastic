@@ -1,0 +1,11 @@
+language: rust
+sudo: required
+
+after_success: curl https://stainless-steel.github.io/travis/after_success.sh | bash
+
+env:
+  global:
+    secure: s6Jy+2v4zZOk8Kf7cMCctE+rGA8h/UUN5Cyuu0W5TVkcOC4e+FndQSNX/xc0yHtK0JqlSdSfB07ET49/FVuvBdPc01KA93YacEEG8Oc++WrjdUuUnALzZ6CgAM/lAZwWG791e2VXnk6ELY28QSDWdRraaHLR4FGBdWRe0g+KWIHj05V5KGUTZYy9hbZMZqhNpJF5YNFK+KwpsPfMu06kmGlpILhSiu4sk6qFMncRXoRSCNiNryx7WZ3BkLsd8lZX3I8vkGdETs3s5sGji58vwIlNttm9wYAMGsrrucYtC5rT+zC3Ztbtjm6oDHC38Kc4QwfFwdlAxxArauizf1bQuvrtS1S6dXuAIymQD0/UAxpwQrdAlBeFxYBQ9Bz0S5aOJTQkSgHb+WUfOjSEZiRmzxh9x2mtElbn6Nh5cKH6bO+ozQnTQAICFAqES4ObJzNvbZeX24EBKmQxeNMyqMDUkZ80ZozKpOfaNol5t9VPHcw4TureJpef1eHfajfpshtHnCUiOuXZYRbNwwox+6Bslws9s5qmi7amc8AOEVZF9WhGk4thejbVt2xvyZQSw/EQYmLlzIvD9uChKyJo+GxcPhztzekR/q8DaX/5ZwutQqk/VctsihGKWPTMOWZj2CxTdWjYzvdsP4li5IXisd3dpPabjiOkHu4ksX4nyyYdfX4=
+
+notifications:
+  email: false
