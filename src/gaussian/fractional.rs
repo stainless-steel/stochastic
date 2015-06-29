@@ -73,7 +73,7 @@ impl Noise {
     {
         match points {
             0 => vec![],
-            1 => vec![Gaussian::new(0.0, 1.0).sample(generator)],
+            1 => vec![Gaussian::new(0.0, Stationary::var(self).sqrt()).sample(generator)],
             _ => {
                 let n = points - 1;
                 let gaussian = Gaussian::new(0.0, 1.0);
