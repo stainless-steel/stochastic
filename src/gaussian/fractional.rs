@@ -107,12 +107,50 @@ impl Process for Noise {
 }
 
 impl Stationary for Noise {
-    type Index = usize;
+    type Distance = usize;
 
-    fn cov(&self, tau: usize) -> f64 {
-        let tau = tau as f64;
+    fn cov(&self, delta: usize) -> f64 {
+        let delta = delta as f64;
         let power = 2.0 * self.hurst;
-        0.5 * self.step.powf(power) * ((tau + 1.0).powf(power) - 2.0 * tau.powf(power) +
-                                       (tau - 1.0).abs().powf(power))
+        let var = self.step.powf(power);
+        0.5 * var * ((delta + 1.0).powf(power) - 2.0 * delta.powf(power) +
+                     (delta - 1.0).abs().powf(power))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{Motion, Noise};
+
+    #[test]
+    fn motion_var() {
+        use Process;
+        let process = Motion::new(0.25);
+        let variances = (0..3).map(|i| process.var(i as f64)).collect::<Vec<_>>();
+        assert_eq!(&variances, &[0.0, 1.0, 2f64.sqrt()]);
+    }
+
+    #[test]
+    fn noise_var() {
+        let process = Noise::new(0.42, 1.0);
+        {
+            use Process;
+            let variances = (0..3).map(|i| process.var(i)).collect::<Vec<_>>();
+            assert_eq!(&variances, &[1.0, 1.0, 1.0]);
+        }
+        {
+            use Stationary;
+            assert_eq!(process.var(), 1.0);
+        }
+        let process = Noise::new(0.25, 0.01);
+        {
+            use Process;
+            let variances = (0..3).map(|i| process.var(i)).collect::<Vec<_>>();
+            assert_eq!(&variances, &[0.1, 0.1, 0.1]);
+        }
+        {
+            use Stationary;
+            assert_eq!(process.var(), 0.1);
+        }
     }
 }

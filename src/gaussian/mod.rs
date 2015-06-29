@@ -19,7 +19,7 @@ pub mod fractional;
 ///    SIAM Journal on Scientific Computing, vol. 18, no. 4, pp. 1088–1107,
 ///    1997.
 fn circulant_embedding<P, F>(process: &P, n: usize, mut gaussian: F) -> Vec<c64>
-    where P: Process<Index=usize, State=f64> + Stationary<Index=usize>, F: FnMut() -> f64
+    where P: Process<Index=usize, State=f64> + Stationary<Distance=usize>, F: FnMut() -> f64
 {
     use czt;
 
