@@ -17,15 +17,8 @@ pub trait Process {
     /// The state space.
     type State;
 
-    /// Sample paths.
-    type Path: Path<Self::State>;
-
     /// Compute the covariance function.
     fn cov(&self, Self::Index, Self::Index) -> f64;
-}
-
-/// A sample path of a stochastic process.
-pub trait Path<T>: Iterator<Item=T> {
 }
 
 /// A stationary process.
