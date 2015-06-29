@@ -202,7 +202,7 @@ mod tests {
         let gaussian = || { k += 1; gaussians[k - 1] };
 
         let hurst = 0.2;
-        let process = gaussian::fractional::Noise::new(hurst);
+        let process = gaussian::fractional::Noise::new(hurst, 1.0);
 
         let n = 42;
         let data = gaussian::circulant_embedding(&process, n, gaussian);

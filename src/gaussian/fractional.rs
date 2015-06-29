@@ -8,10 +8,18 @@ use {Process, Stationary};
 use gaussian::circulant_embedding;
 
 macro_rules! hurst(
-    ($hurst:expr) => ({
-        let hurst = $hurst;
-        debug_assert!(hurst > 0.0 && hurst < 1.0);
-        hurst
+    ($value:expr) => ({
+        let value = $value;
+        debug_assert!(value > 0.0 && value < 1.0);
+        value
+    });
+);
+
+macro_rules! step(
+    ($value:expr) => ({
+        let value = $value;
+        debug_assert!(value > 0.0);
+        value
     });
 );
 
@@ -23,6 +31,7 @@ pub struct Motion {
 /// A fractional Gaussian noise.
 pub struct Noise {
     hurst: f64,
+    step: f64,
 }
 
 impl Motion {
@@ -33,7 +42,7 @@ impl Motion {
     }
 
     /// Generate a sample path.
-    pub fn sample<G>(&self, points: usize, generator: &mut G) -> Vec<f64>
+    pub fn sample<G>(&self, points: usize, step: f64, generator: &mut G) -> Vec<f64>
         where G: Generator
     {
         match points {
@@ -41,7 +50,7 @@ impl Motion {
             1 => vec![0.0],
             _ => {
                 let mut data = vec![0.0];
-                data.extend(Noise::new(self.hurst).sample(points - 1, generator));
+                data.extend(Noise::new(self.hurst, step).sample(points - 1, generator));
                 for i in 2..points {
                     data[i] += data[i - 1];
                 }
@@ -54,8 +63,8 @@ impl Motion {
 impl Noise {
     /// Create a fractional Gaussian noise.
     #[inline]
-    pub fn new(hurst: f64) -> Noise {
-        Noise { hurst: hurst!(hurst) }
+    pub fn new(hurst: f64, step: f64) -> Noise {
+        Noise { hurst: hurst!(hurst), step: step!(step) }
     }
 
     /// Generate a sample path.
@@ -103,6 +112,7 @@ impl Stationary for Noise {
     fn cov(&self, tau: usize) -> f64 {
         let tau = tau as f64;
         let power = 2.0 * self.hurst;
-        0.5 * ((tau + 1.0).powf(power) - 2.0 * tau.powf(power) + (tau - 1.0).abs().powf(power))
+        0.5 * self.step.powf(power) * ((tau + 1.0).powf(power) - 2.0 * tau.powf(power) +
+                                       (tau - 1.0).abs().powf(power))
     }
 }
