@@ -77,9 +77,8 @@ impl Noise {
             _ => {
                 let n = points - 1;
                 let gaussian = Gaussian::new(0.0, 1.0);
-                let scale = (1.0 / n as f64).powf(self.hurst);
                 let data = circulant_embedding(self, n, || gaussian.sample(generator));
-                data.iter().take(points).map(|point| scale * point.re()).collect()
+                data.iter().take(points).map(|point| point.re()).collect()
             },
         }
     }
