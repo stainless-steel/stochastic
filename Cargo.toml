@@ -12,6 +12,7 @@ description = "The package provides means of simulating stochastic processes."
 complex = "*"
 czt = "*"
 probability = "*"
+random = "*"
 
 [dev-dependencies]
 assert = "*"

@@ -2,7 +2,7 @@
 
 use complex::Complex;
 use probability::distribution::{Distribution, Gaussian};
-use probability::prelude::Source;
+use random::Source;
 
 use {Process, Stationary};
 use gaussian::circulant_embedding;

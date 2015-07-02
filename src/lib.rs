@@ -6,6 +6,7 @@ extern crate assert;
 extern crate complex;
 extern crate czt;
 extern crate probability;
+extern crate random;
 
 pub mod gaussian;
 
