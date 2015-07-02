@@ -2,7 +2,7 @@
 
 use complex::Complex;
 use probability::distribution::{Distribution, Gaussian};
-use probability::generator::Generator;
+use probability::prelude::Source;
 
 use {Process, Stationary};
 use gaussian::circulant_embedding;
@@ -42,15 +42,15 @@ impl Motion {
     }
 
     /// Generate a sample path.
-    pub fn sample<G>(&self, points: usize, step: f64, generator: &mut G) -> Vec<f64>
-        where G: Generator
+    pub fn sample<S>(&self, points: usize, step: f64, source: &mut S) -> Vec<f64>
+        where S: Source
     {
         match points {
             0 => vec![],
             1 => vec![0.0],
             _ => {
                 let mut data = vec![0.0];
-                data.extend(Noise::new(self.hurst, step).sample(points - 1, generator));
+                data.extend(Noise::new(self.hurst, step).sample(points - 1, source));
                 for i in 2..points {
                     data[i] += data[i - 1];
                 }
@@ -68,16 +68,16 @@ impl Noise {
     }
 
     /// Generate a sample path.
-    pub fn sample<G>(&self, points: usize, generator: &mut G) -> Vec<f64>
-        where G: Generator
+    pub fn sample<S>(&self, points: usize, source: &mut S) -> Vec<f64>
+        where S: Source
     {
         match points {
             0 => vec![],
-            1 => vec![Gaussian::new(0.0, Stationary::var(self).sqrt()).sample(generator)],
+            1 => vec![Gaussian::new(0.0, Stationary::var(self).sqrt()).sample(source)],
             _ => {
                 let n = points - 1;
                 let gaussian = Gaussian::new(0.0, 1.0);
-                let data = circulant_embedding(self, n, || gaussian.sample(generator));
+                let data = circulant_embedding(self, n, || gaussian.sample(source));
                 data.iter().take(points).map(|point| point.re()).collect()
             },
         }
