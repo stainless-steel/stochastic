@@ -1,7 +1,7 @@
 //! Fractional Brownian motion and fractional Gaussian noise.
 
 use complex::Complex;
-use probability::distribution::{Distribution, Gaussian};
+use probability::distribution::{Gaussian, Sample};
 use random::Source;
 
 use {Process, Stationary};
