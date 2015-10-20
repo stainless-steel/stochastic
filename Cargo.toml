@@ -1,6 +1,6 @@
 [package]
 name = "stochastic"
-version = "0.3.3"
+version = "0.3.4"
 authors = ["Ivan Ukhov <ivan.ukhov@gmail.com>"]
 license = "MIT"
 repository = "https://github.com/stainless-steel/stochastic"
@@ -9,10 +9,10 @@ documentation = "https://stainless-steel.github.io/stochastic"
 description = "The package provides means of simulating stochastic processes."
 
 [dependencies]
-complex = "*"
-czt = "*"
+complex = "0.7"
+czt = "0.1"
 probability = "0.12"
-random = "*"
+random = "0.9"
 
 [dev-dependencies]
-assert = "*"
+assert = "0.6"
