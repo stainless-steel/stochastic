@@ -1,8 +1,10 @@
 //! Gaussian processes.
 
-use complex::{Complex, c64};
+use czt::c64;
 
 use {Process, Stationary};
+
+macro_rules! c64(($re:expr, $im:expr) => (c64::new($re, $im)));
 
 pub mod fractional;
 
@@ -26,7 +28,7 @@ fn circulant_embedding<P, F>(process: &P, n: usize, mut gaussian: F) -> Vec<c64>
     macro_rules! chirp(
         ($m:expr) => ({
             use std::f64::consts::PI;
-            c64::from_polar(1.0, -2.0 * PI / $m as f64)
+            c64::from_polar(&1.0, &(-2.0 * PI / $m as f64))
         });
     );
 
@@ -40,27 +42,26 @@ fn circulant_embedding<P, F>(process: &P, n: usize, mut gaussian: F) -> Vec<c64>
         }
     }
 
-    let mut data = czt::forward(&data, m, chirp!(m), c64(1.0, 0.0));
+    let mut data = czt::forward(&data, m, chirp!(m), c64!(1.0, 0.0));
     {
         let scale = 1.0 / (2 * n) as f64;
         for i in 0..m {
             if cfg!(debug_assertions) {
                 const EPSILON: f64 = 1e-10;
-                assert!(data[i].re() > -EPSILON);
-                assert!(data[i].im().abs() < EPSILON);
+                assert!(data[i].re > -EPSILON);
+                assert!(data[i].im.abs() < EPSILON);
             }
-            let sigma = (data[i].re().max(0.0) * scale).sqrt();
-            data[i] = c64(sigma * gaussian(), sigma * gaussian());
+            let sigma = (data[i].re.max(0.0) * scale).sqrt();
+            data[i] = c64!(sigma * gaussian(), sigma * gaussian());
         }
     }
 
-    czt::forward(&mut data, m, chirp!(m), c64(1.0, 0.0))
+    czt::forward(&mut data, m, chirp!(m), c64!(1.0, 0.0))
 }
 
 #[cfg(test)]
 mod tests {
     use assert;
-    use complex::Complex;
     use gaussian;
 
     #[test]
@@ -210,7 +211,7 @@ mod tests {
         let mut sum = 0.0;
         let scale = (n as f64).powf(-hurst);
         let data = data.iter().take(n + 1).map(|point| {
-            sum += scale * point.re();
+            sum += scale * point.re;
             sum
         }).collect::<Vec<_>>();
 

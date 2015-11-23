@@ -9,8 +9,7 @@ documentation = "https://stainless-steel.github.io/stochastic"
 description = "The package provides means of simulating stochastic processes."
 
 [dependencies]
-complex = "0.7"
-czt = "0.1"
+czt = "0.2"
 probability = "0.12"
 random = "0.9"
 

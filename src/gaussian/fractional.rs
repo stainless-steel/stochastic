@@ -1,6 +1,5 @@
 //! Fractional Brownian motion and fractional Gaussian noise.
 
-use complex::Complex;
 use probability::distribution::{Gaussian, Sample};
 use random::Source;
 
@@ -78,7 +77,7 @@ impl Noise {
                 let n = points - 1;
                 let gaussian = Gaussian::new(0.0, 1.0);
                 let data = circulant_embedding(self, n, || gaussian.sample(source));
-                data.iter().take(points).map(|point| point.re()).collect()
+                data.iter().take(points).map(|point| point.re).collect()
             },
         }
     }
