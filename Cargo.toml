@@ -1,12 +1,12 @@
 [package]
 name = "stochastic"
-version = "0.4.0"
-authors = ["Ivan Ukhov <ivan.ukhov@gmail.com>"]
+version = "0.4.1"
 license = "MIT"
-repository = "https://github.com/stainless-steel/stochastic"
-homepage = "https://github.com/stainless-steel/stochastic"
-documentation = "https://stainless-steel.github.io/stochastic"
+authors = ["Ivan Ukhov <ivan.ukhov@gmail.com>"]
 description = "The package provides means of simulating stochastic processes."
+documentation = "https://stainless-steel.github.io/stochastic"
+homepage = "https://github.com/stainless-steel/stochastic"
+repository = "https://github.com/stainless-steel/stochastic"
 
 [dependencies]
 czt = "0.2"
