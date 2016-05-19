@@ -11,7 +11,7 @@ description = "The package provides means of simulating stochastic processes."
 [dependencies]
 czt = "0.2"
 probability = "0.12"
-random = "0.9"
+random = "0.10"
 
 [dev-dependencies]
 assert = "0.6"
