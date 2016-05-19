@@ -1,7 +1,7 @@
 //! Fractional Brownian motion and fractional Gaussian noise.
 
 use probability::distribution::{Gaussian, Sample};
-use random::Source;
+use probability::source::Source;
 
 use {Process, Stationary};
 use gaussian::circulant_embedding;
