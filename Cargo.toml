@@ -1,6 +1,6 @@
 [package]
 name = "stochastic"
-version = "0.4.1"
+version = "0.4.2"
 license = "MIT"
 authors = ["Ivan Ukhov <ivan.ukhov@gmail.com>"]
 description = "The package provides means of simulating stochastic processes."
@@ -13,4 +13,4 @@ czt = "0.2"
 probability = "0.14"
 
 [dev-dependencies]
-assert = "0.6"
+assert = "0.7"
