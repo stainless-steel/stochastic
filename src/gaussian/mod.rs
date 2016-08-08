@@ -1,6 +1,6 @@
 //! Gaussian processes.
 
-use czt::c64;
+use czt::{Transform, c64};
 
 use {Process, Stationary};
 
@@ -23,8 +23,6 @@ pub mod fractional;
 fn circulant_embedding<P, F>(process: &P, n: usize, mut gaussian: F) -> Vec<c64>
     where P: Process<Index=usize, State=f64> + Stationary<Distance=usize>, F: FnMut() -> f64
 {
-    use czt;
-
     macro_rules! chirp(
         ($m:expr) => ({
             use std::f64::consts::PI;
@@ -42,7 +40,7 @@ fn circulant_embedding<P, F>(process: &P, n: usize, mut gaussian: F) -> Vec<c64>
         }
     }
 
-    let mut data = czt::forward(&data, m, chirp!(m), c64!(1.0, 0.0));
+    let mut data = data.transform(m, chirp!(m), c64!(1.0, 0.0));
     {
         let scale = 1.0 / (2 * n) as f64;
         for i in 0..m {
@@ -56,7 +54,7 @@ fn circulant_embedding<P, F>(process: &P, n: usize, mut gaussian: F) -> Vec<c64>
         }
     }
 
-    czt::forward(&mut data, m, chirp!(m), c64!(1.0, 0.0))
+    data.transform(m, chirp!(m), c64!(1.0, 0.0))
 }
 
 #[cfg(test)]
