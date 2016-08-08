@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["fractional","Fractional Brownian motion and fractional Gaussian noise."]]});

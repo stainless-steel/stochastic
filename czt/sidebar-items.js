@@ -1,0 +1,1 @@
+initSidebarItems({"trait":[["Transform","The transform."]],"type":[["c32","A complex number with 32-bit parts."],["c64","A complex number with 64-bit parts."]]});

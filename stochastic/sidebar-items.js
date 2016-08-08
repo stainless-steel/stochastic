@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["gaussian","Gaussian processes."]],"trait":[["Distance","A distance."],["Process","A stochastic process."],["Stationary","A stationary process."]]});
